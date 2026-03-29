@@ -1,0 +1,78 @@
+{
+  "matched": [
+    {
+      "txn_id": "T1",
+      "internal_amount": 1000,
+      "provider_amount": 1000,
+      "internal_status": "SUCCESS",
+      "provider_status": "SUCCESS",
+      "internal_timestamp": "2026-03-20T10:00:00Z",
+      "provider_timestamp": "2026-03-20T10:00:05Z",
+      "timestamp_difference_seconds": 5,
+      "reason": "EXACT_MATCH"
+    }
+  ],
+  "amount_mismatch": [
+    {
+      "txn_id": "T2",
+      "internal_amount": 500,
+      "provider_amount": 400,
+      "internal_status": "SUCCESS",
+      "provider_status": "SUCCESS",
+      "internal_timestamp": "2026-03-20T10:05:00Z",
+      "provider_timestamp": "2026-03-20T10:05:02Z",
+      "timestamp_difference_seconds": 2,
+      "reason": "AMOUNT_MISMATCH"
+    }
+  ],
+  "status_mismatch": [
+    {
+      "txn_id": "T3",
+      "internal_amount": 200,
+      "provider_amount": 200,
+      "internal_status": "PENDING",
+      "provider_status": "FAILED",
+      "internal_timestamp": "2026-03-20T10:08:00Z",
+      "provider_timestamp": "2026-03-20T10:08:00Z",
+      "timestamp_difference_seconds": 0,
+      "reason": "STATUS_MISMATCH"
+    }
+  ],
+  "missing_in_provider": [
+    {
+      "txn_id": "T4",
+      "internal_amount": 999.99,
+      "provider_amount": null,
+      "internal_status": "SUCCESS",
+      "provider_status": null,
+      "internal_timestamp": "2026-03-20T10:09:00Z",
+      "provider_timestamp": null,
+      "timestamp_difference_seconds": 0,
+      "reason": "MISSING_IN_PROVIDER"
+    }
+  ],
+  "missing_in_internal": [
+    {
+      "txn_id": "T5",
+      "internal_amount": null,
+      "provider_amount": 75,
+      "internal_status": null,
+      "provider_status": "SUCCESS",
+      "internal_timestamp": null,
+      "provider_timestamp": "2026-03-20T10:12:00Z",
+      "timestamp_difference_seconds": 0,
+      "reason": "MISSING_IN_INTERNAL"
+    }
+  ],
+  "summary": {
+    "job_id": "sample-job",
+    "total_internal": 4,
+    "total_provider": 4,
+    "matched_count": 1,
+    "amount_mismatch_count": 1,
+    "status_mismatch_count": 1,
+    "missing_in_provider_count": 1,
+    "missing_in_internal_count": 1,
+    "timestamp_tolerance_seconds": 5
+  }
+}

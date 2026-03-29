@@ -1,0 +1,26 @@
+[
+  {
+    "txn_id": "T1",
+    "amount": 1000,
+    "status": "SUCCESS",
+    "timestamp": "2026-03-20T10:00:05Z"
+  },
+  {
+    "txn_id": "T2",
+    "amount": 400,
+    "status": "SUCCESS",
+    "timestamp": "2026-03-20T10:05:02Z"
+  },
+  {
+    "txn_id": "T3",
+    "amount": 200,
+    "status": "FAILED",
+    "timestamp": "2026-03-20T10:08:00Z"
+  },
+  {
+    "txn_id": "T5",
+    "amount": 75,
+    "status": "SUCCESS",
+    "timestamp": "2026-03-20T10:12:00Z"
+  }
+]

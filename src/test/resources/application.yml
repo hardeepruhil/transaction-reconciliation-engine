@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+  jackson:
+    serialization:
+      write-bigdecimal-as-plain: true
+
+app:
+  reconciliation:
+    timestamp-tolerance-seconds: 5
+    sample-internal-path: classpath:data/internal-transactions.json
+    sample-provider-path: classpath:data/provider-transactions.json
