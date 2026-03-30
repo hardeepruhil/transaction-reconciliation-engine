@@ -97,6 +97,19 @@ Useful endpoints:
 - `GET /api/reconciliations/{jobId}/summary`
 - `GET /h2-console`
 
+### Use Postman
+
+Import the collection at `postman/transaction-reconciliation-engine.postman_collection.json`.
+
+Recommended demo flow:
+
+- run `Run Sample Data Reconciliation`
+- the collection automatically saves the returned `job_id` into the `jobId` variable
+- run `Get Reconciliation By Job ID`
+- run `Get Reconciliation Summary`
+
+For custom files, update the `internalFilePath` and `providerFilePath` collection variables and use `Run Custom File Reconciliation`.
+
 ### Run With Sample Data Through the API
 
 ```bash
