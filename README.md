@@ -6,7 +6,6 @@ Spring Boot service for reconciling transactions between an internal platform an
 - configurable timestamp tolerance
 - persisted, queryable reconciliation runs in H2
 - idempotent reruns for identical inputs
-- local CLI execution
 - minimal REST API
 
 ## Tech Stack
@@ -23,8 +22,9 @@ Spring Boot service for reconciling transactions between an internal platform an
 
 - `src/main/java/com/assignment/reconciliation/service` contains ingestion, hashing, reconciliation, and persistence orchestration
 - `src/main/java/com/assignment/reconciliation/api` exposes the REST endpoints
-- `src/main/java/com/assignment/reconciliation/cli` provides the CLI execution path
+- `src/main/java/com/assignment/reconciliation/persistence` contains the H2 entities and repositories
 - `src/main/resources/data` contains bundled sample input datasets
+- `data` is created locally to store the file-based H2 database
 - `sample-output.json` shows an example result payload
 
 ## Reconciliation Approach
@@ -82,55 +82,75 @@ This is intentionally simple for the assignment while remaining easy to migrate 
 - Java 21 installed and available on PATH
 - Maven installed and available on PATH
 
-### Start the API
+### Start the application
 
 ```bash
-mvn spring-boot:run
+mvn clean spring-boot:run
 ```
 
-The API will start on `http://localhost:8080`.
+The application starts on `http://localhost:8080` and automatically creates the H2 database files inside the local `data` directory.
 
-Useful endpoints:
+### API endpoints
 
 - `POST /api/reconciliations/run`
 - `GET /api/reconciliations/{jobId}`
 - `GET /api/reconciliations/{jobId}/summary`
-- `GET /h2-console`
 
-### Use Postman
+### Run the reconciliation API with sample data
 
-Import the collection at `postman/transaction-reconciliation-engine.postman_collection.json`.
-
-Recommended demo flow:
-
-- run `Run Sample Data Reconciliation`
-- the collection automatically saves the returned `job_id` into the `jobId` variable
-- run `Get Reconciliation By Job ID`
-- run `Get Reconciliation Summary`
-
-For custom files, update the `internalFilePath` and `providerFilePath` collection variables and use `Run Custom File Reconciliation`.
-
-### Run With Sample Data Through the API
+If you call the run endpoint without file paths, the application falls back to the bundled sample datasets.
 
 ```bash
-curl -X POST http://localhost:8080/api/reconciliations/run ^
-  -H "Content-Type: application/json" ^
-  -d "{\"use_sample_data\": true}"
+curl -X POST "http://localhost:8080/api/reconciliations/run" \
+  -H "Content-Type: application/json" \
+  -d '{"use_sample_data":true}'
 ```
 
-### Run the CLI With Sample Data
+You can also send an empty body:
 
 ```bash
-mvn spring-boot:run "-Dspring-boot.run.arguments=--cli --cli.useSampleData=true --cli.output=output/result.json"
+curl -X POST "http://localhost:8080/api/reconciliations/run"
 ```
 
-### Run the CLI With Custom Files
+### Run the reconciliation API with custom files
 
 ```bash
-mvn spring-boot:run "-Dspring-boot.run.arguments=--cli --cli.internal=C:\path\internal.json --cli.provider=C:\path\provider.json --cli.output=output/result.json"
+curl -X POST "http://localhost:8080/api/reconciliations/run" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "internal_file_path":"/absolute/path/to/internal.json",
+    "provider_file_path":"/absolute/path/to/provider.json"
+  }'
 ```
 
-The CLI prints the reconciliation response to stdout and optionally writes the same JSON to the provided output file.
+The response contains `summary.job_id`. Use that value in the next two API calls.
+
+### Get the full reconciliation result by job id
+
+```bash
+curl "http://localhost:8080/api/reconciliations/<jobId>"
+```
+
+### Get the reconciliation summary by job id
+
+```bash
+curl "http://localhost:8080/api/reconciliations/<jobId>/summary"
+```
+
+### Access the H2 database
+
+Open `http://localhost:8080/h2-console` in your browser and connect with:
+
+- JDBC URL: `jdbc:h2:file:./data/reconciliation-db;AUTO_SERVER=TRUE`
+- Username: `sa`
+- Password: leave blank
+
+The database stores reconciliation data in:
+
+- `reconciliation_jobs`
+- `reconciliation_results`
+
+The physical H2 files are created under the repo-local `data` directory.
 
 ## Sample Input
 
@@ -156,7 +176,6 @@ Test coverage includes:
 - duplicate and malformed input validation
 - API execution and summary retrieval
 - idempotent reruns returning the same stored job
-- CLI output generation
 
 ## Design Discussion
 
